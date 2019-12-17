@@ -1,4 +1,4 @@
-module git.verystar.cn/go/config
+module github.com/verystar/config
 
 go 1.12
 
