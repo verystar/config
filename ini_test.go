@@ -1,4 +1,4 @@
-package config
+package ini
 
 import (
 	. "github.com/smartystreets/goconvey/convey"
@@ -10,9 +10,9 @@ const (
 	NotFoundIni = "404.ini"
 	MoreIni     = "testdata/more.ini"
 
-	DevelopEnv = "develop"
+	DevelopEnv = "development"
 	TestingEnv = "testing"
-	ProductEnv = "product"
+	ProductEnv = "production"
 )
 
 func TestLoad(t *testing.T) {
@@ -30,62 +30,62 @@ func TestLoad(t *testing.T) {
 
 func TestConfig_Read(t *testing.T) {
 	Convey("Test read", t, func() {
-		conf, _ := Load(TestIni, MoreIni)
+		cfg, _ := Load(TestIni, MoreIni)
 
 		Convey("comment begins with # or ;", func() {
-			v1 := conf.Read(DevelopEnv, "key2")
+			v1 := cfg.Read(DevelopEnv, "key2")
 			So(v1, ShouldEqual, "")
-			v2 := conf.Read(DevelopEnv, "key3")
+			v2 := cfg.Read(DevelopEnv, "key3")
 			So(v2, ShouldEqual, "")
 		})
 		Convey("a line doesnot contain =", func() {
-			v := conf.Read(DevelopEnv, "key4")
+			v := cfg.Read(DevelopEnv, "key4")
 			So(v, ShouldEqual, "")
 		})
 		Convey("a key's value is empty", func() {
-			v := conf.Read(DevelopEnv, "key5")
+			v := cfg.Read(DevelopEnv, "key5")
 			So(v, ShouldEqual, "")
 		})
 		Convey(`comment with substr '\t#'`, func() {
-			v := conf.Read(DevelopEnv, "key6")
+			v := cfg.Read(DevelopEnv, "key6")
 			So(v, ShouldEqual, "key6")
 		})
 		Convey(`comment with substr ' #'`, func() {
-			v := conf.Read(DevelopEnv, "key7")
+			v := cfg.Read(DevelopEnv, "key7")
 			So(v, ShouldEqual, "key7")
 		})
 		Convey(`comment with substr ' ;'`, func() {
-			v := conf.Read(DevelopEnv, "key8")
+			v := cfg.Read(DevelopEnv, "key8")
 			So(v, ShouldEqual, "key8")
 		})
 		Convey(`comment with substr '\t//'`, func() {
-			v := conf.Read(DevelopEnv, "key9")
+			v := cfg.Read(DevelopEnv, "key9")
 			So(v, ShouldEqual, "key9")
 		})
 		Convey(`comment with substr ' //'`, func() {
-			v := conf.Read(DevelopEnv, "key10")
+			v := cfg.Read(DevelopEnv, "key10")
 			So(v, ShouldEqual, "key10")
 		})
 		Convey("normal ", func() {
-			v := conf.Read(DevelopEnv, "key11")
+			v := cfg.Read(DevelopEnv, "key11")
 			So(v, ShouldEqual, "key11#$*()@###")
 		})
 		Convey("different value with same key in different sections", func() {
-			v1 := conf.Read(DevelopEnv, "key1")
-			So(v1, ShouldEqual, "develop")
-			v2 := conf.Read(TestingEnv, "key1")
+			v1 := cfg.Read(DevelopEnv, "key1")
+			So(v1, ShouldEqual, "development")
+			v2 := cfg.Read(TestingEnv, "key1")
 			So(v2, ShouldEqual, "testing")
-			v3 := conf.Read(ProductEnv, "key1")
-			So(v3, ShouldEqual, "product")
+			v3 := cfg.Read(ProductEnv, "key1")
+			So(v3, ShouldEqual, "production")
 		})
 		Convey("values in multiple files", func() {
-			v1 := conf.Read(DevelopEnv, "key1")
-			So(v1, ShouldEqual, "develop")
-			v2 := conf.Read(DevelopEnv, "name")
+			v1 := cfg.Read(DevelopEnv, "key1")
+			So(v1, ShouldEqual, "development")
+			v2 := cfg.Read(DevelopEnv, "name")
 			So(v2, ShouldEqual, "star")
-			v3 := conf.Read(TestingEnv, "name")
+			v3 := cfg.Read(TestingEnv, "name")
 			So(v3, ShouldEqual, "kimi")
-			v4 := conf.Read(ProductEnv, "name")
+			v4 := cfg.Read(ProductEnv, "name")
 			So(v4, ShouldEqual, "Kimi.Wang")
 		})
 	})

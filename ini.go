@@ -1,4 +1,4 @@
-package config
+package ini
 
 import (
 	"bufio"
@@ -7,28 +7,29 @@ import (
 	"strings"
 )
 
-type Config struct {
-	ConfigMap map[string]map[string]string
+type Ini struct {
+	Data map[string]map[string]string
 }
 
-func Load(path string, paths ...string) (*Config, error) {
-	conf := new(Config)
-	conf.ConfigMap = make(map[string]map[string]string)
+func Load(iniFile string, iniFiles ...string) (*Ini, error) {
+	ini := &Ini{
+		Data: make(map[string]map[string]string),
+	}
 
-	if err := conf.parseDataSource(path); err != nil {
+	if err := ini.parseDataSource(iniFile); err != nil {
 		return nil, err
 	}
 
-	for _, v := range paths {
-		if err := conf.parseDataSource(v); err != nil {
+	for _, file := range iniFiles {
+		if err := ini.parseDataSource(file); err != nil {
 			return nil, err
 		}
 	}
-	return conf, nil
+	return ini, nil
 }
 
-func (c *Config) parseDataSource(path string) error {
-	f, err := os.Open(path)
+func (ini *Ini) parseDataSource(iniFile string) error {
+	f, err := os.Open(iniFile)
 	if err != nil {
 		return err
 	}
@@ -105,18 +106,18 @@ func (c *Config) parseDataSource(path string) error {
 
 		value = strings.TrimSpace(value)
 
-		if _, ok := c.ConfigMap[section]; ok {
-			c.ConfigMap[section][key] = value
+		if _, ok := ini.Data[section]; ok {
+			ini.Data[section][key] = value
 		} else {
 			m[key] = value
-			c.ConfigMap[section] = m
+			ini.Data[section] = m
 		}
 	}
 	return nil
 }
 
-func (c *Config) Read(section, key string) string {
-	v, ok := c.ConfigMap[section][key]
+func (ini *Ini) Read(section, key string) string {
+	v, ok := ini.Data[section][key]
 	if !ok {
 		return ""
 	}

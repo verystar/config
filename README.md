@@ -3,21 +3,21 @@
 package main
 
 import (
-	"config-demo/config"
+	"github.com/verystar/ini"
 	"fmt"
 )
 
 func main() {
-	filename := "config/testdata/more.ini"
-	env := "develop"
+	filename := "testdata/more.ini"
+	section := "development"
 
-	conf, err := config.Load(filename)
+	cfg, err := ini.Load(filename)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
-	fmt.Println(conf.Read(env, "name"))
-	fmt.Println(conf.Read(env, "name1"))
+	fmt.Println(cfg.Read(section, "name"))
+	fmt.Println(cfg.Read(section, "name1"))
 }
 
 ```

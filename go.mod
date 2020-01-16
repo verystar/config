@@ -1,4 +1,4 @@
-module github.com/verystar/config
+module github.com/verystar/ini
 
 go 1.12
 
